@@ -164,21 +164,73 @@ Observations:
 1. Fixed and volatile acidity don't seem to have a strong correlation
 1. However, fixed and citric show signs of positive correlation
 1. Volatile and citric acid show signs of negative correlation
-1. By extension, Fixed acidity should be positively correlated to the ratio of citric and volatile acidity, which is what the last plot demonstrates
+1. By extension, Fixed acidity should be positively correlated to the ratio of citric and volatile acidity, which is what the last plot demonstrates.
+1. Given fixed acidity, citric and volatile acidity are somewhat redundant. The relationship is not exactly linear, which would be the only reason to still keep citric and volatile acidity in the dataset.
+
+## pH and density
+
+```{r echo=FALSE}
+ggplot(aes(x = pH, y = density), data = winedata) +
+  geom_point()
+```
+
+Observations:
+1. A linear relationship IS NOT observed.
+
+## Relationship to the quality
+
+Let's examine the relationship of a few variables to the quality.
+
+### Fixed acidity vs. quality
+
+```{r echo=FALSE}
+ggplot(aes(x = fixed.acidity, y = quality), data = winedata) +
+  geom_point()
+```
+
+Observation:
+1. No direct relation between fixed acidity and quality observed
+
+### Residual sugar vs. quality
+
+```{r echo=FALSE}
+ggplot(aes(x = residual.sugar, y = quality), data = winedata) +
+  geom_point()
+```
+Observation
+1. Both quality 3 and 8 wines have lower values of residual sugar. So residual sugar is not alone a strong indicator of quality.
+
+### Alchohol vs. quality
+
+```{r echo=FALSE}
+ggplot(aes(x = alcohol, y = quality), data = winedata) +
+  geom_point()
+```
+
+Observation:
+1. We see some trend in the lower bound for alcohol, where lower values can be observed for lower quality of wine.
+1. However, the max values for alcohol do not indicate any correlation to the quality.
 
 # Bivariate Analysis
-
-> **Tip**: As before, summarize what you found in your bivariate explorations
-here. Use the questions below to guide your discussion.
 
 ### Talk about some of the relationships you observed in this part of the \
 investigation. How did the feature(s) of interest vary with other features in \
 the dataset?
 
+1. I found no strong correlation between quality and a few features that I examined.
+2. Most likely, wine quality would depend on several parameters at once, and can probably be revealed by running linear regression with all the features with quality as the target variable.
+3. PCA can be used to find feature importances.
+
 ### Did you observe any interesting relationships between the other features \
 (not the main feature(s) of interest)?
 
+1. There was a strong positive correlation between fixed.acidity and citric.acid.
+2. There was a strong negative correlation between citric.acid and volatile.acidity.
+3. Thus, fixed.acidity describes a lot of what citric.acid and volatile.acidity describe together, making citric.acid and volatile.acidity somewhat redundant.
+
 ### What was the strongest relationship you found?
+
+The relationship between fixed.acidity, citric.acid and volatile.acidity was the strongest that I found.
 
 
 # Multivariate Plots Section

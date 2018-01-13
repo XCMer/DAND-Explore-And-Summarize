@@ -130,13 +130,7 @@ As such, no tidying was done because most of the data were already normally dist
 
 # Bivariate Plots Section
 
-> **Tip**: Based on what you saw in the univariate plots, what relationships
-between variables might be interesting to look at in this section? Don't limit
-yourself to relationships between a main output feature and one of the
-supporting variables. Try to look at relationships between supporting variables
-as well.
-
-## Relationship between acidity
+## Relationship between various acidity parameters
 
 I see three features on acidity, "fixed.acidity", "volatile.acidity", "citric.acidity". It'd be interesting to know if there are any relationships between them.
 
@@ -155,23 +149,26 @@ ggplot(aes(x = volatile.acidity, y = citric.acid), data = winedata) +
   geom_point()
 ```
 
-```{r echo=FALSE}
-ggplot(aes(x = fixed.acidity, y = citric.acid / volatile.acidity), data = winedata) +
-  geom_point()
+```{r}
+cor.test(winedata$fixed.acidity, winedata$volatile.acidity, method='pearson')
+cor.test(winedata$fixed.acidity, winedata$citric.acid, method='pearson')
+cor.test(winedata$citric.acid, winedata$volatile.acidity, method='pearson')
 ```
 
 Observations:
-1. Fixed and volatile acidity don't seem to have a strong correlation
-1. However, fixed and citric show signs of positive correlation
-1. Volatile and citric acid show signs of negative correlation
-1. By extension, Fixed acidity should be positively correlated to the ratio of citric and volatile acidity, which is what the last plot demonstrates.
-1. Given fixed acidity, citric and volatile acidity are somewhat redundant. The relationship is not exactly linear, which would be the only reason to still keep citric and volatile acidity in the dataset.
+1. Fixed and volatile acidity don't have a strong correlation (pearson coeff of magnitude 0.25)
+1. However, fixed and citric show signs of positive correlation (pearson coeff of 0.67)
+1. Volatile and citric acid show signs of negative correlation (pearson coeff of -0.55)
 
 ## pH and density
 
 ```{r echo=FALSE}
 ggplot(aes(x = pH, y = density), data = winedata) +
   geom_point()
+```
+
+```{r}
+cor.test(winedata$pH, winedata$density, method='pearson')
 ```
 
 Observations:
@@ -188,8 +185,12 @@ ggplot(aes(x = fixed.acidity, y = quality), data = winedata) +
   geom_point()
 ```
 
+```{r}
+cor.test(winedata$fixed.acidity, winedata$quality, method='pearson')
+```
+
 Observation:
-1. No direct relation between fixed acidity and quality observed
+1. No direct relation between fixed acidity and quality observed (pearson coeff of 0.124)
 
 ### Residual sugar vs. quality
 
@@ -197,8 +198,13 @@ Observation:
 ggplot(aes(x = residual.sugar, y = quality), data = winedata) +
   geom_point()
 ```
+
+```{r}
+cor.test(winedata$residual.sugar, winedata$quality, method='pearson')
+```
+
 Observation
-1. Both quality 3 and 8 wines have lower values of residual sugar. So residual sugar is not alone a strong indicator of quality.
+1. Both quality 3 and 8 wines have lower values of residual sugar. So residual sugar is not alone a strong indicator of quality. (pearson coeff of 0.013)
 
 ### Alchohol vs. quality
 
@@ -207,9 +213,14 @@ ggplot(aes(x = alcohol, y = quality), data = winedata) +
   geom_point()
 ```
 
+```{r}
+cor.test(winedata$alcohol, winedata$quality, method='pearson')
+```
+
 Observation:
 1. We see some trend in the lower bound for alcohol, where lower values can be observed for lower quality of wine.
 1. However, the max values for alcohol do not indicate any correlation to the quality.
+1. The pearson coefficient is 0.476
 
 # Bivariate Analysis
 
@@ -217,7 +228,7 @@ Observation:
 investigation. How did the feature(s) of interest vary with other features in \
 the dataset?
 
-1. I found no strong correlation between quality and a few features that I examined.
+1. I found no strong correlation between quality and a few features that I examined with no pair exceeding a pearson coefficient of 0.5.
 2. Most likely, wine quality would depend on several parameters at once, and can probably be revealed by running linear regression with all the features with quality as the target variable.
 3. PCA can be used to find feature importances.
 
@@ -226,12 +237,10 @@ the dataset?
 
 1. There was a strong positive correlation between fixed.acidity and citric.acid.
 2. There was a strong negative correlation between citric.acid and volatile.acidity.
-3. Thus, fixed.acidity describes a lot of what citric.acid and volatile.acidity describe together, making citric.acid and volatile.acidity somewhat redundant.
 
 ### What was the strongest relationship you found?
 
-The relationship between fixed.acidity, citric.acid and volatile.acidity was the strongest that I found.
-
+The relationship between fixed.acidity and citric.acid was the strongest, with a pearson coefficient of 0.67.
 
 # Multivariate Plots Section
 

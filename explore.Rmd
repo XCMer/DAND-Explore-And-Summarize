@@ -109,7 +109,7 @@ There are 1599 observations across 13 features. As mentioned on the website, the
 
 All the fields are numeric in nature. Quality is the only field that's human-defined. Rest of the fields are chemical properties of the wine.
 
-All the data examine so far were normally distributed.
+All the data examine so far were normally distributed. Between the basic summary of the data and the histograms, I thought boxplots would have added little value.
 
 ### What is/are the main feature(s) of interest in your dataset?
 
@@ -136,9 +136,35 @@ yourself to relationships between a main output feature and one of the
 supporting variables. Try to look at relationships between supporting variables
 as well.
 
-```{r echo=FALSE, Bivariate_Plots}
+## Relationship between acidity
 
+I see three features on acidity, "fixed.acidity", "volatile.acidity", "citric.acidity". It'd be interesting to know if there are any relationships between them.
+
+```{r echo=FALSE}
+ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
+  geom_point()
 ```
+
+```{r echo=FALSE}
+ggplot(aes(x = fixed.acidity, y = citric.acid), data = winedata) +
+  geom_point()
+```
+
+```{r echo=FALSE}
+ggplot(aes(x = volatile.acidity, y = citric.acid), data = winedata) +
+  geom_point()
+```
+
+```{r echo=FALSE}
+ggplot(aes(x = fixed.acidity, y = citric.acid / volatile.acidity), data = winedata) +
+  geom_point()
+```
+
+Observations:
+1. Fixed and volatile acidity don't seem to have a strong correlation
+1. However, fixed and citric show signs of positive correlation
+1. Volatile and citric acid show signs of negative correlation
+1. By extension, Fixed acidity should be positively correlated to the ratio of citric and volatile acidity, which is what the last plot demonstrates
 
 # Bivariate Analysis
 

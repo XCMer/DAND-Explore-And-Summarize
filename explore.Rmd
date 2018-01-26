@@ -389,15 +389,50 @@ the dataset?
 
 # Multivariate Plots Section
 
-> **Tip**: Now it's time to put everything together. Based on what you found in
-the bivariate plots section, create a few multivariate plots to investigate
-more complex interactions between variables. Make sure that the plots that you
-create here are justified by the plots you explored in the previous section. If
-you plan on creating any mathematical models, this is the section where you
-will do that.
+Since quality is the only categorical variable, all the multi-variate plots will have to be faceted around it. We'll explore some of the interesting relationships from the bivariate section but faceted on quality
 
-```{r echo=FALSE, Multivariate_Plots}
+## Explore relationship between acidity for different qualities
 
+```{r echo=FALSE}
+ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  facet_wrap(~quality)
+```
+
+```{r echo=FALSE}
+ggplot(aes(x = fixed.acidity, y = citric.acid), data = winedata) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  facet_wrap(~quality)
+```
+
+Observations:
+1. For different qualities, the geom_smooth line looks similarly sloped. So, quality does not seem to have an impact in how these quantities vary.
+
+## Relationship between fixed acidity and volatile acidity for different pH
+
+Let's explore the seemingly anomalous relationship in detail. In the bivariate section, I had hypothesized that fixed acidity is the lurking variable in the relationship between pH and volatile acidity.
+
+```{r echo=FALSE}
+ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  facet_wrap(~as.factor(ceiling(pH*4) / 4))
+```
+
+Observations:
+1. For different groupings of pH, fixed and volatile acidity either show positive or negative correlation.
+2. This explains the seeming anomaly between volatile acidity and pH. Fixed acidity and pH have a strong negative correlation as expected. Hoewver, volatile acidity's correlation with fixed acidity is different depending on the pH level. As I corroborated earlier, volatile acidity might not have a direct correlation to pH due to how it's measured.
+
+## Examine features having strong correlation to quality
+Volatile acidity, sulphates, and alcohol had strong correlation to quality. We'll examine the relationships between these three variables faceted by quality.
+
+```{r echo=FALSE}
+ggplot(aes(x = alcohol, y = volatile.acidity), data = winedata) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  facet_wrap(~as.factor(quality))
 ```
 
 # Multivariate Analysis
@@ -406,10 +441,9 @@ will do that.
 investigation. Were there features that strengthened each other in terms of \
 looking at your feature(s) of interest?
 
-### Were there any interesting or surprising interactions between features?
+1. 
 
-### OPTIONAL: Did you create any models with your dataset? Discuss the \
-strengths and limitations of your model.
+### Were there any interesting or surprising interactions between features?
 
 ------
 

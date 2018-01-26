@@ -167,7 +167,6 @@ All the fields are numeric in nature. Quality is the only field that's human-def
 Apart from citric acid, all the other plots were normally distributed, or normally distributed with a positive skew. I saw an unusually large tail of outliers in the case of residual sugar and chlorides.
 
 ### What is/are the main feature(s) of interest in your dataset?
-
 The main feature of interest was the "quality", since it was human-determined. There are no categorical variables of interest, so all numeric variables with normal distribution look about the same in a univariate analysis.
 
 To get more information about which numeric features are of importance, we'll need to do a bivariate analysis on the numeric feature and quality. The correlation between numeric features can also be found to detect redundance.
@@ -184,6 +183,75 @@ I did not transform any of the data. Although the Udacity video mentioned that "
 The only unusual distribution that I saw was for citric acid, which did not follow a normal pattern.
 
 # Bivariate Plots Section
+
+I'll first plot the correlations between all variables. This will help me inspect the right ones. I'll only look at values that are >= 0.25 in either direction.
+
+```{r echo=FALSE}
+cor(winedata)
+```
+
+Below, I enumerate all correlations that I'd explore later (>= 0.25).
+
+Observations on quality:
+1. Volatile acidity (-0.390557780)
+2. Sulphates (0.251397079)
+3. Alcohol (0.47616632)
+
+Observations on fixed acidity:
+1. Volatile acidity (-0.25613089)
+2. Density (0.66804729)
+3. pH (-0.68297819)
+
+Observations on volatile acidity:
+1. Fixed acidity (-0.25613089)
+2. Citric acid (-0.55249568)
+3. pH (0.23493729) (this is not more than 0.25, but it's positive for some reason)
+4. Sulphates (-0.260986685)
+5. Quality (-0.39055778)
+
+Observations on citric acid:
+1. Fixed acidity (0.67170343)
+2. Volatile acidity (-0.552495685)
+3. Density (0.36494718)
+4. pH (-0.54190414)
+5. Sulphates (0.312770044)
+
+Observations on residual sugar:
+1. Density (0.35528337)
+
+Observations on chloride:
+1. pH (-0.26502613)
+2. Sulphates (0.371260481)
+
+Observations on free sulphur dioxide:
+1. Total sulphur dioxide (0.66766645)
+
+Observations on total sulphur dioxide:
+1. Free sulphur dioxide (0.667666450)
+
+Observations on density:
+1. Fixed acidity (0.66804729)
+2. Citric acid (0.36494718)
+3. Residual sugar (0.355283371)
+4. pH (-0.34169933)
+5. Alcohol (-0.49617977)
+
+Observations on pH:
+1. Fixed acidity (-0.68297819)
+2. Citric acid (-0.54190414)
+3. Chlorides (-0.265026131)
+4. Density (-0.34169933)
+5. Volatile acidity (0.23493729) (this is not more than 0.25, but it's positive for some reason)
+
+Observations on sulphates:
+1. Volatile acidity (-0.260986685)
+2. Citric acid (0.31277004)
+3. Chlorides (0.371260481)
+4. Quality (0.25139708)
+
+Observations on alcohol:
+1. Density (-0.49617977)
+2. Quality (0.47616632)
 
 ## Relationship between various acidity parameters
 

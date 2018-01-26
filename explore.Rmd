@@ -409,6 +409,8 @@ ggplot(aes(x = fixed.acidity, y = citric.acid), data = winedata) +
 
 Observations:
 1. For different qualities, the geom_smooth line looks similarly sloped. So, quality does not seem to have an impact in how these quantities vary.
+2. Fixed acidity and volatile acidity have negative correlation.
+3. Citrict acid and fixed acidity have positive correlation.
 
 ## Relationship between fixed acidity and volatile acidity for different pH
 
@@ -435,15 +437,24 @@ ggplot(aes(x = alcohol, y = volatile.acidity), data = winedata) +
   facet_wrap(~as.factor(quality))
 ```
 
+Observations:
+1. We can observe that less volatile acidity correlates with better wine quality.
+2. Also, increase in concentration of alcohol correlates with better wine quality.
+3. This corroborates what we found earlier in the bivariate analysis.
+
 # Multivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the \
 investigation. Were there features that strengthened each other in terms of \
 looking at your feature(s) of interest?
 
-1. 
+1. I observed that quality correlated positively with alcohol, and negatively with volatile acidity.
+2. Fixed acidity has positive correlation with citric acid across all quality levels.
+2. Fixed acidity has negative correlation with vilatile acid across all quality levels.
 
 ### Were there any interesting or surprising interactions between features?
+
+1. By looking at fixed acidity and volatile acidity across different pH, we could see that the relationship is sometimes positively correlated and sometimes negatively correlated depending on the pH. We could finally find out why we got a positive correlation between pH and volatile acidity, which corroborates what we found in bivariate analysis.
 
 ------
 

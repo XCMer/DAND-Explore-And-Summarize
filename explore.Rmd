@@ -15,6 +15,7 @@ Red Wine Data Analysis by Raahul Seshadri
 # want it to. This will clean up the flow of your report.
 
 library(ggplot2)
+library(dplyr)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
@@ -184,7 +185,7 @@ The only unusual distribution that I saw was for citric acid, which did not foll
 
 # Bivariate Plots Section
 
-I'll first plot the correlations between all variables. This will help me inspect the right ones. I'll only look at values that are >= 0.25 in either direction.
+I'll first plot the correlations between all variables. This will help me inspect the right ones. I'll only look at values that are >= 0.25 in either direction. Correlations lesser in magnitude than 0.25 can also tell us a lot about the dataset, but I'm confining my investigation to the major features.
 
 ```{r echo=FALSE}
 cor(winedata)
@@ -253,9 +254,53 @@ Observations on alcohol:
 1. Density (-0.49617977)
 2. Quality (0.47616632)
 
+## Analysis of features with strong correlation with quality
+
+Let's take a look at features that have a correlation with quality, namely: Volatile acidity, sulphates, alcohol
+
+### Alcohol and quality
+
+```{r echo=FALSE}
+ggplot(aes(x = alcohol, y = quality), data = winedata) +
+  geom_point()
+```
+
+It's difficult to decipher the above scatterplot. While we know that there's a correlation, a boxplot might give us more insights.
+
+```{r echo=FALSE}
+ggplot(aes(x = as.factor(quality), y = alcohol), data = winedata) +
+  geom_boxplot()
+```
+
+Observations:
+1. The box plot is much clearer in showing that higher quality wines have a higher alcohol content.
+2. Quality level 5 has the highest number of outliers. It's hard to say why this is the case as of now.
+
+### Sulphates and quality
+
+```{r echo=FALSE}
+ggplot(aes(x = as.factor(quality), y = sulphates), data = winedata) +
+  geom_boxplot()
+```
+
+Observations:
+1. While the relationship is not as strong as alcohol vs. quality, sulphates do show positive correlation to quality.
+2. Thus, higher quality alcohols tend to have higher medians of sulphates.
+3. Quality 5 again has the highest number of outliers. It could be that average alcohols were the most common choice in the dataset by the human reviewers, and these people might have decided to err on the side of average.
+
+### Volatile acidity and quality
+
+```{r echo=FALSE}
+ggplot(aes(x = as.factor(quality), y = volatile.acidity), data = winedata) +
+  geom_boxplot()
+```
+Observations:
+1. A clear negative trend. Higher quality alcohols have lower amount of volatile acidity.
+2. Quality score 5 has a quantity of outliers comparabable to Quality 6, but more spaced out. When it comes to quality score of 5, the variables we've analysed so far say very little about the quality in isolation. A combination of these features could tell us more about why a certain alcohol got a quality rating 5.
+
 ## Relationship between various acidity parameters
 
-I see three features on acidity, "fixed.acidity", "volatile.acidity", "citric.acidity". It'd be interesting to know if there are any relationships between them.
+I see three features on acidity, "fixed.acidity", "volatile.acidity", "citric.acidity". We also know their correlation with each other. Let's visualize it.
 
 ```{r echo=FALSE}
 ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
@@ -272,13 +317,8 @@ ggplot(aes(x = volatile.acidity, y = citric.acid), data = winedata) +
   geom_point()
 ```
 
-```{r}
-cor.test(winedata$fixed.acidity, winedata$volatile.acidity, method='pearson')
-cor.test(winedata$fixed.acidity, winedata$citric.acid, method='pearson')
-cor.test(winedata$citric.acid, winedata$volatile.acidity, method='pearson')
-```
-
 Observations:
+1. These observations corroborate the correlation coefficients that we calculated earlier. 
 1. Fixed and volatile acidity don't have a strong correlation (pearson coeff of magnitude 0.25)
 1. However, fixed and citric show signs of positive correlation (pearson coeff of 0.67)
 1. Volatile and citric acid show signs of negative correlation (pearson coeff of -0.55)
@@ -290,60 +330,43 @@ ggplot(aes(x = pH, y = density), data = winedata) +
   geom_point()
 ```
 
-```{r}
-cor.test(winedata$pH, winedata$density, method='pearson')
+Let's look at a boxplot for a better view of the correlation.
+
+```{r echo=FALSE}
+ggplot(aes(x = as.factor(ceiling(pH*4)/4), y = density), data = winedata) +
+  geom_boxplot()
 ```
+
+In order to make the boxplot feasible, I multiply the pH by 4 and find the "ceiling." This gives me an integer, which I then divide by 4 again. In essence, pH gets grouped in sections of 0.25, and allows me to plot a boxplot by treating the pH groups as a factor.
 
 Observations:
-1. A linear relationship IS NOT observed.
+1. With increasing pH, we observe decreasing density.
 
-## Relationship to the quality
+## Volatile acidity vs. pH
 
-Let's examine the relationship of a few variables to the quality.
-
-### Fixed acidity vs. quality
+For some reason, volatile acidity has a positive correlation with pH.
 
 ```{r echo=FALSE}
-ggplot(aes(x = fixed.acidity, y = quality), data = winedata) +
+ggplot(aes(x = pH, y = volatile.acidity), data = winedata) +
   geom_point()
 ```
 
-```{r}
-cor.test(winedata$fixed.acidity, winedata$quality, method='pearson')
+```{r echo=FALSE}
+ggplot(aes(x = as.factor(ceiling(pH*4)/4), y = volatile.acidity), data = winedata) +
+  geom_boxplot()
 ```
-
-Observation:
-1. No direct relation between fixed acidity and quality observed (pearson coeff of 0.124)
-
-### Residual sugar vs. quality
 
 ```{r echo=FALSE}
-ggplot(aes(x = residual.sugar, y = quality), data = winedata) +
-  geom_point()
+ggplot(aes(x = as.factor(ceiling(pH*4)/4), y = volatile.acidity), data = filter(winedata, quality==6)) +
+  geom_boxplot()
 ```
 
-```{r}
-cor.test(winedata$residual.sugar, winedata$quality, method='pearson')
-```
+For quality score 6, the anomalous relationship between pH and acidity is even more apparent.
 
-Observation
-1. Both quality 3 and 8 wines have lower values of residual sugar. So residual sugar is not alone a strong indicator of quality. (pearson coeff of 0.013)
-
-### Alchohol vs. quality
-
-```{r echo=FALSE}
-ggplot(aes(x = alcohol, y = quality), data = winedata) +
-  geom_point()
-```
-
-```{r}
-cor.test(winedata$alcohol, winedata$quality, method='pearson')
-```
-
-Observation:
-1. We see some trend in the lower bound for alcohol, where lower values can be observed for lower quality of wine.
-1. However, the max values for alcohol do not indicate any correlation to the quality.
-1. The pearson coefficient is 0.476
+Observations:
+1. Since lower pH should generally mean higher acidity, this relationship is anomalous.
+2. However, we're talking about volatile acidity here. As per "http://waterhouse.ucdavis.edu/whats-in-wine/volatile-acidity", there is a specific method to measuring volatile acidity. Thus, I'm assuming that you cannot detect its presence solely by using a "litmus" test.
+3. Thus, the relationship between pH and volatile acidity might not really exist, and could be driven a third variable instead (say, fixed.acidity). For example, fixed acidity shows negative correlation with pH, and fixed acidity also shows negative correlation with volatile acidity. By extension, pH is bound to show positive correlation with volatile.acidity. But it could be fixed acidity driving the relation, whereas there is no causation between volatile.acidity and pH.
 
 # Bivariate Analysis
 

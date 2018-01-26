@@ -374,19 +374,18 @@ Observations:
 investigation. How did the feature(s) of interest vary with other features in \
 the dataset?
 
-1. I found no strong correlation between quality and a few features that I examined with no pair exceeding a pearson coefficient of 0.5.
-2. Most likely, wine quality would depend on several parameters at once, and can probably be revealed by running linear regression with all the features with quality as the target variable.
-3. PCA can be used to find feature importances.
+1. There were strong correlations of alcohol, volatile acidity, and sulphates with quality.
+2. There seemed to be an unusual positive correlation between volatile acidity and pH, but it turned out to be a red herring. It was fixed acidity's correlation with pH and volatile acidity, whereas volatile acidity is measured using specialized methods.
 
 ### Did you observe any interesting relationships between the other features \
 (not the main feature(s) of interest)?
 
-1. There was a strong positive correlation between fixed.acidity and citric.acid.
-2. There was a strong negative correlation between citric.acid and volatile.acidity.
+1. The most interesting one was between pH and volatile acidity as I explained above.
 
 ### What was the strongest relationship you found?
 
-The relationship between fixed.acidity and citric.acid was the strongest, with a pearson coefficient of 0.67.
+1. The relationship between fixed.acidity and pH was the strongest, with a pearson coefficient of 0.68. However, this relationship is not a surprise and rather scientific.
+2. However, the strongest pertinent one was between alcohol and quality, with a pearson coefficient of 0.47.
 
 # Multivariate Plots Section
 

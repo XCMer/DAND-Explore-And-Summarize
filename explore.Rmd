@@ -22,9 +22,8 @@ library(ggplot2)
 winedata <- read.csv('wineQualityReds.csv')
 ```
 
-> **Tip**: Before you create any plots, it is a good idea to provide a short
-introduction into the dataset that you are planning to explore. Replace this
-quoted text with that general information!
+I don't have much experience with wine. However, I did notice that we have a feature called "quality", and
+my analysis will revolve around finding out correlations of other variables to quality.
 
 # Univariate Plots Section
 
@@ -46,7 +45,7 @@ We observe the following:
 1. There are 1599 observations across 13 features.
 1. As mentioned on the website, there are no missing values for any of the features.
 1. All the fields are numeric in nature.
-1. Quality is the only field that's human-defined. Rest of the fields are chemical properties of the wine.
+1. Quality is the only field that's human-defined. Rest of the fields are chemical properties of the wine. It'd be interesting to find the relationship between these numeric variables and the quality.
 
 ## Distribution of quality
 
@@ -59,10 +58,11 @@ ggplot(aes(x = quality), data = winedata) +
 Observations:
 1. Quality ranges from 3 to 8.
 2. No wine in the dataset has been rated with a quality of 1, 2, 9, and 10.
-3. Most of the wine have a quality rating of 5 or 6.
-4. The distribution is approximately normal around 5 and 6, although 7 has a greater count than 4.
+3. Most of the wine have a quality rating of 5 or 6, which is much more in comparison to the good/bad wines.
 
 ## Distribution of a few numeric features
+
+I'll first look at a few numeric features and their distributions. There are no categorical features. I will not be getting rid of any outliers in my univariate analysis, because I can't be sure yet if they are errors, or whether the data was collected in such a way that we see outliers. For example, the distribution of quality is disproportionate as we saw above.
 
 The bin-width has to set by looking at the min/max value. I explicitly set the `bins` instead of the `binwidth`, since it is more convenient. Every variable has a different range.
 
@@ -71,11 +71,35 @@ The bin-width has to set by looking at the min/max value. I explicitly set the `
 ```{r echo=FALSE}
 ggplot(aes(x = fixed.acidity), data = winedata) +
   geom_histogram(bins = 30) +
-  scale_x_continuous(breaks=)
+  scale_x_continuous()
 ```
 
 Observations:
-1. The data is positively skwewed with mean at 8.32 (as per the statistics we calculated earlier)
+1. The data is positively skwewed with mean at 8.32 (as per the statistics we calculated earlier).
+1. The median is 7.90.
+
+### Volatile acidity
+
+```{r echo=FALSE}
+ggplot(aes(x = volatile.acidity), data = winedata) +
+  geom_histogram(bins = 30) +
+  scale_x_continuous()
+```
+
+Observations:
+1. Looks positively skewed with a mean of 0.5278, and median of 0.5200.
+
+### Citric acid
+
+```{r echo=FALSE}
+ggplot(aes(x = citric.acid), data = winedata) +
+  geom_histogram(binwidth=0.1) +
+  scale_x_continuous()
+```
+
+Observations:
+1. Definitely not normal. Although I tried the binwidth of 0.05 (for higher resolution), I settled on 0.1 so that I can see the trend clearly.
+1. Towards the end, I can see some missing values (somewhere between 0.75 and 1.0).
 
 ### pH
 
@@ -88,7 +112,18 @@ ggplot(aes(x = pH), data = winedata) +
 ```
 
 Observations:
-1. The distribution is again normal centered around 3.31.
+1. The distribution is again normal with mean 3.311 and median 3.310 (indicating no skew).
+
+### Residual sugar
+
+```{r echo=FALSE}
+ggplot(aes(x = residual.sugar), data = winedata) +
+  geom_histogram(binwidth=0.5) +
+  scale_x_continuous()
+```
+
+Observations:
+1. Positively skewed normal with a lot of outliers on the positive end.
 
 ### Density
 
@@ -100,7 +135,27 @@ ggplot(aes(x = density), data = winedata) +
 ```
 
 Observations:
-1. Again, normally distributed around 0.9967
+1. Normally distributed around mean 0.9967.
+
+### Chlorides
+
+```{r echo=FALSE}
+ggplot(aes(x = chlorides), data = winedata) +
+  geom_histogram(binwidth=0.01)
+```
+
+Observations:
+1. A positively skewed normal distribution with a lot of outliers.
+
+### Alcohol
+
+```{r echo=FALSE}
+ggplot(aes(x = alcohol), data = winedata) +
+  geom_histogram(binwidth=0.5)
+```
+
+Observations:
+1. Positively skewed distribution.
 
 # Univariate Analysis
 
@@ -109,7 +164,7 @@ There are 1599 observations across 13 features. As mentioned on the website, the
 
 All the fields are numeric in nature. Quality is the only field that's human-defined. Rest of the fields are chemical properties of the wine.
 
-All the data examine so far were normally distributed. Between the basic summary of the data and the histograms, I thought boxplots would have added little value.
+Apart from citric acid, all the other plots were normally distributed, or normally distributed with a positive skew. I saw an unusually large tail of outliers in the case of residual sugar and chlorides.
 
 ### What is/are the main feature(s) of interest in your dataset?
 
@@ -126,7 +181,7 @@ No, I did not.
 ### Of the features you investigated, were there any unusual distributions? \
 I did not transform any of the data. Although the Udacity video mentioned that "normalizing" data is required to apply linear regression, it is incorrect. The data can be in any format, the error has to be normally distributed.
 
-As such, no tidying was done because most of the data were already normally distributed.
+The only unusual distribution that I saw was for citric acid, which did not follow a normal pattern.
 
 # Bivariate Plots Section
 

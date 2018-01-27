@@ -585,45 +585,72 @@ looking at your feature(s) of interest?
 
 # Final Plots and Summary
 
-> **Tip**: You've done a lot of exploration and have built up an understanding
-of the structure of and relationships between the variables in your dataset.
-Here, you will select three plots from all of your previous exploration to
-present here as a summary of some of your most interesting findings. Make sure
-that you have refined your selected plots for good titling, axis labels (with
-units), and good aesthetic choices (e.g. color, transparency). After each plot,
-make sure you justify why you chose each plot by describing what it shows.
+I'm choosing the 3 plots that represent a strong and pertinent relationship.
 
-### Plot One
-```{r echo=FALSE, Plot_One}
+### Alcohol vs. quality
 
+```{r echo=FALSE}
+ggplot(aes(x = as.factor(quality), y = alcohol), data = winedata) +
+  ggtitle("Alcohol vs. quality") +
+  xlab("Quality of the wine (1 to 10)") +
+  ylab("Alcohol content (% by volume)") +
+  geom_boxplot()
 ```
 
-### Description One
+This is a very important plot, because it shows the relationship between the quality of the wine and the quantity of alcohol that it contains. It shows that more quantity of alcohol is correlated with better quality wine.
+
+If we were designing a model, I'd put alcohol, volatile acidity, and sulphates in as the main features and check what accuracy I get, before pulling in other features.
 
 
-### Plot Two
-```{r echo=FALSE, Plot_Two}
-
+### Fixed acidity vs. volatile acidity faceted by pH
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
+  ggtitle("Fixed acidity vs. volatile acidity faceted by pH") +
+  xlab("Fixed acidity (tartaric acid - g/dm^3)") +
+  ylab("Volatile acidity (acetic acid - g/dm^3)") +
+  geom_point() +
+  geom_smooth(method="lm") +
+  facet_wrap(~as.factor(ceiling(pH*4) / 4))
 ```
 
-### Description Two
+Earlier, I saw an interesting relationship between volatile acidity and pH. Generally, lower pH suggests higher acidity. However, pH and volatile acidity had a positive correlation, which didn't make sense at first.
 
+Also, fixed acidity has a strong negative correlation with pH, as it was expected. My theory was that the observed relationship between volatile acidity and pH was driven by some third variable (fixed acidity), and they weren't really directly correlated.
 
-### Plot Three
-```{r echo=FALSE, Plot_Three}
+This is one of the plots that shows why the data is the way it is. For different values of pH, we see both positive and negative correlation between volatile and fixed acidity. It means that the amount of volatile acidity really doesn't depend on fixed acidity, or else we would have seen correlation in only one direction for all values of pH. This means that pH is not really measuring the volatile acidity, but the dataset's construction leads to this red herring correlation between pH and volatile acidity.
 
+### Fixed vs. citric acidity
+
+```{r echo=FALSE}
+ggplot(aes(x = fixed.acidity, y = citric.acid), data = winedata) +
+  ggtitle("Fixed acidity vs. citric acid") +
+  xlab("Fixed acidity (tartaric acid - g/dm^3)") +
+  ylab("Citric acid (g/dm^3)") +
+  geom_point() +
+  geom_smooth(method="lm")
 ```
 
-### Description Three
+I selected this plot because when we go ahead and train a regression model to predict quality, we'd want all of our variables to be as uncorrelated as possible. Or else, it indicates a certain degree of redundancy. Increase in dimensionality of features would require more amount of data to maintain accuracy.
+
+In cases of fixed and citric acid, I see an almost linear relationship. In such cases, instead of having both of them as features, I'd just have one feature that's the ratio of the two, or just pick one of the two. This way, the regressor has to deal with one less feature.
+
+As we saw above, the same is not true for fixed and volatile acidity, so I'd leave them separate and untouched.
+
+Plots like this allows us to make important decisions on reducing dimensionality, checking if PCA would help, etc. Basically, with lesser dimensions and redundancy, our model will be able to learn better with the same amount of data.
 
 ------
 
 # Reflection
 
-> **Tip**: Here's the final step! Reflect on the exploration you performed and
-the insights you found. What were some of the struggles that you went through?
-What went well? What was surprising? Make sure you include an insight into
-future work that could be done with the dataset.
+When I started with the exploration, the first thing that I noticed was that all the features were numeric. The target variable, Quality, was the only categorical variable.
 
-> **Tip**: Don't forget to remove this, and the other **Tip** sections before
-saving your final work and knitting the final report!
+I had to adjust my mindset to this dataset, because having categorical features helps with plotting interesting multivariate plots. Because the features were numerical, I had to come up with artificial factors by grouping continuous variables into discrete intervals. I did this in some areas where my domain knowledge helped me get the right interval, for example, the pH. Quality was the other variable that I used to do multivariate plots.
+
+That target that I set for myself was to find out what influences the quality. When I read the description of quality from the website that I obtained the dataset from, it said that the quality was determined from evaluation by 3 different wine experts. However, it would have been immensely informative for me to have those 3 scores separately, rather than just the mean or media. 
+
+In the univariate section, I was more interested in getting to know the structure of the data. I started with quality, so that I knew the "class distribution." As I expected, it turned out to resemble a normal distribution. Knowing this was critical, because it influenced how I interpreted the other univariate distributions.
+
+For example, if I ever saw a normal distribution for another feature, I took it as a candidate that could predict the quality, because its distribution matched that of the quality, and could thus have differentiating information encoded in it. Of course, correlation was used to confirm to what degree a variable affected quality, but I'm just focusing on the visual aspects.
+
+Univariate distributions that would have been uniform or partly uniform, might not have helped much predicting the wine quality, except for a subset of target classes (they'd only have helped with identifying, say, higher quality wine, whereas being uniform for other wines).
+

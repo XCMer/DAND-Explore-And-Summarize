@@ -654,3 +654,12 @@ For example, if I ever saw a normal distribution for another feature, I took it 
 
 Univariate distributions that would have been uniform or partly uniform, might not have helped much predicting the wine quality, except for a subset of target classes (they'd only have helped with identifying, say, higher quality wine, whereas being uniform for other wines).
 
+The bivariate analysis was an interesting opportunity to learn about interrelationships between variables. Since there were a lot of combinations of variables, I started out by calculating correlations between all of them, so that I could narrow down on a few combinations that I'd end up visualizing.
+
+This is where I investigated strong relationships of features with the quality. It was also a good way of finding redundancies between features (high correlation). When modelling, we deal with the curse of dimensionality, and bivariate plots help us confirm if we can reduce the dimensionality of features by either eliminating the redundant ones, or pulling in linear combinations of variables instead of having them separately.
+
+I also started investigating the relationship between volatile acidity and pH. Although my initial assumption was that they should be negatively correlated, but I was wrong in my assumption of how the pH was being measured, and how volatile acidity is measured. I drew a couple of plots around it.
+
+The multivariate section was more of a way to reaffirm observations from the bivariate section. I only faceted on quality (which is the only categorical variable) and pH (because I had the domain knowledge to know that grouping intervals of pH could lead to interesting plots).
+
+I selected the final plots to bring out correlation with quality, which was our target variable. But instead of just fixating on quality, I also picked out plots that showed strong correlation, hence redundancy, in the data. Since the volatile acidity vs. pH was initially confusing due to my assumption, I included that plot as well to demonstrate analysis that required several graphs to understand.

@@ -32,6 +32,8 @@ We'll go through the summary of the dataset and a few univariate plots to unders
 
 ## Summary of the dataset
 
+Before doing a deep dive into the data, I pull up a summary of every single variable. This gives me, at a glance, the distribution, mean, median, min, and max values for all the variables. This will come in handy when I create univariate plots around these variables, because it'll allow me to select parameters like the binsize.
+
 ```{r echo=FALSE}
 summary(winedata)
 ```
@@ -52,11 +54,15 @@ We observe the following:
 
 ```{r echo=FALSE}
 ggplot(aes(x = quality), data = winedata) +
+  ggtitle("Counts of different qualities of wine") +
+  xlab("Quality of wine from 1 to 10") +
+  ylab("No. of wines") +
   geom_histogram(binwidth = 1) +
   scale_x_continuous(breaks = 1:10, limits = c(1, 10))
 ```
 
 Observations:
+
 1. Quality ranges from 3 to 8.
 2. No wine in the dataset has been rated with a quality of 1, 2, 9, and 10.
 3. Most of the wine have a quality rating of 5 or 6, which is much more in comparison to the good/bad wines.
@@ -65,17 +71,21 @@ Observations:
 
 I'll first look at a few numeric features and their distributions. There are no categorical features. I will not be getting rid of any outliers in my univariate analysis, because I can't be sure yet if they are errors, or whether the data was collected in such a way that we see outliers. For example, the distribution of quality is disproportionate as we saw above.
 
-The bin-width has to set by looking at the min/max value. I explicitly set the `bins` instead of the `binwidth`, since it is more convenient. Every variable has a different range.
+The bin-width has to set by looking at the min/max value. I'll keep referring to the summary statistics to choose the right no. of bins or the binsize, depending on which is convenient.
 
 ### Fixed acidity
 
 ```{r echo=FALSE}
 ggplot(aes(x = fixed.acidity), data = winedata) +
+  ggtitle("Counts of wine against fixed acidity") +
+  xlab("Fixed acidity (tartaric acid - g/dm^3)") +
+  ylab("No. of wines") +
   geom_histogram(bins = 30) +
   scale_x_continuous()
 ```
 
 Observations:
+
 1. The data is positively skwewed with mean at 8.32 (as per the statistics we calculated earlier).
 1. The median is 7.90.
 
@@ -83,22 +93,30 @@ Observations:
 
 ```{r echo=FALSE}
 ggplot(aes(x = volatile.acidity), data = winedata) +
+  ggtitle("Counts of wine against volatile acidity") +
+  xlab("Volatile acidity (acetic acid - g/dm^3)") +
+  ylab("No. of wines") +
   geom_histogram(bins = 30) +
   scale_x_continuous()
 ```
 
 Observations:
+
 1. Looks positively skewed with a mean of 0.5278, and median of 0.5200.
 
 ### Citric acid
 
 ```{r echo=FALSE}
 ggplot(aes(x = citric.acid), data = winedata) +
+  ggtitle("Counts of wine against citric acid") +
+  xlab("Amount of citric acid (g/dm^3)") +
+  ylab("No. of wines") +
   geom_histogram(binwidth=0.1) +
   scale_x_continuous()
 ```
 
 Observations:
+
 1. Definitely not normal. Although I tried the binwidth of 0.05 (for higher resolution), I settled on 0.1 so that I can see the trend clearly.
 1. Towards the end, I can see some missing values (somewhere between 0.75 and 1.0).
 
@@ -108,22 +126,30 @@ The value of pH ranges from 0 to 14 (15 values). I've chosen 30 as the bin size 
 
 ```{r echo=FALSE}
 ggplot(aes(x = pH), data = winedata) +
+  ggtitle("Counts of wine against pH") +
+  xlab("pH") +
+  ylab("No. of wines") +
   geom_histogram(bins=30) +
   scale_x_continuous(breaks=seq(0, 14, 0.5))
 ```
 
 Observations:
+
 1. The distribution is again normal with mean 3.311 and median 3.310 (indicating no skew).
 
 ### Residual sugar
 
 ```{r echo=FALSE}
 ggplot(aes(x = residual.sugar), data = winedata) +
+  ggtitle("Counts of wine against residual sugar") +
+  xlab("Residual sugar (g/dm^3)") +
+  ylab("No. of wines") +
   geom_histogram(binwidth=0.5) +
   scale_x_continuous()
 ```
 
 Observations:
+
 1. Positively skewed normal with a lot of outliers on the positive end.
 
 ### Density
@@ -132,30 +158,42 @@ I iterated on the number of bins from 10 to 20 to 40, till I was satisfied with 
 
 ```{r echo=FALSE}
 ggplot(aes(x = density), data = winedata) +
+  ggtitle("Counts of wine against density") +
+  xlab("Density (g/cm^3)") +
+  ylab("No. of wines") +
   geom_histogram(bins=40)
 ```
 
 Observations:
+
 1. Normally distributed around mean 0.9967.
 
 ### Chlorides
 
 ```{r echo=FALSE}
 ggplot(aes(x = chlorides), data = winedata) +
+  ggtitle("Counts of wine against chlorides") +
+  xlab("Chlorides (sodium chloride - g/dm^3)") +
+  ylab("No. of wines") +
   geom_histogram(binwidth=0.01)
 ```
 
 Observations:
+
 1. A positively skewed normal distribution with a lot of outliers.
 
 ### Alcohol
 
 ```{r echo=FALSE}
 ggplot(aes(x = alcohol), data = winedata) +
+  ggtitle("Counts of wine against alcohol content") +
+  xlab("Alcohol (% by volume)") +
+  ylab("No. of wines") +
   geom_histogram(binwidth=0.5)
 ```
 
 Observations:
+
 1. Positively skewed distribution.
 
 # Univariate Analysis
@@ -194,74 +232,101 @@ cor(winedata)
 Below, I enumerate all correlations that I'd explore later (>= 0.25).
 
 Observations on quality:
+
 1. Volatile acidity (-0.390557780)
 2. Sulphates (0.251397079)
 3. Alcohol (0.47616632)
 
+
 Observations on fixed acidity:
+
 1. Volatile acidity (-0.25613089)
 2. Density (0.66804729)
 3. pH (-0.68297819)
 
+
 Observations on volatile acidity:
+
 1. Fixed acidity (-0.25613089)
 2. Citric acid (-0.55249568)
 3. pH (0.23493729) (this is not more than 0.25, but it's positive for some reason)
 4. Sulphates (-0.260986685)
 5. Quality (-0.39055778)
 
+
 Observations on citric acid:
+
 1. Fixed acidity (0.67170343)
 2. Volatile acidity (-0.552495685)
 3. Density (0.36494718)
 4. pH (-0.54190414)
 5. Sulphates (0.312770044)
 
+
 Observations on residual sugar:
+
 1. Density (0.35528337)
 
+
 Observations on chloride:
+
 1. pH (-0.26502613)
 2. Sulphates (0.371260481)
 
+
 Observations on free sulphur dioxide:
+
 1. Total sulphur dioxide (0.66766645)
 
+
 Observations on total sulphur dioxide:
+
 1. Free sulphur dioxide (0.667666450)
 
+
 Observations on density:
+
 1. Fixed acidity (0.66804729)
 2. Citric acid (0.36494718)
 3. Residual sugar (0.355283371)
 4. pH (-0.34169933)
 5. Alcohol (-0.49617977)
 
+
 Observations on pH:
+
 1. Fixed acidity (-0.68297819)
 2. Citric acid (-0.54190414)
 3. Chlorides (-0.265026131)
 4. Density (-0.34169933)
 5. Volatile acidity (0.23493729) (this is not more than 0.25, but it's positive for some reason)
 
+
 Observations on sulphates:
+
 1. Volatile acidity (-0.260986685)
 2. Citric acid (0.31277004)
 3. Chlorides (0.371260481)
 4. Quality (0.25139708)
 
+
 Observations on alcohol:
+
 1. Density (-0.49617977)
 2. Quality (0.47616632)
 
+
 ## Analysis of features with strong correlation with quality
 
-Let's take a look at features that have a correlation with quality, namely: Volatile acidity, sulphates, alcohol
+Let's take a look at features that have a correlation with quality, namely: Volatile acidity, sulphates, alcohol.
 
 ### Alcohol and quality
 
 ```{r echo=FALSE}
 ggplot(aes(x = alcohol, y = quality), data = winedata) +
+  ggtitle("Alcohol vs. quality") +
+  xlab("Alcohol (% by volume)") +
+  ylab("Quality of the wine (1 to 10)") +
   geom_point()
 ```
 
@@ -269,10 +334,14 @@ It's difficult to decipher the above scatterplot. While we know that there's a c
 
 ```{r echo=FALSE}
 ggplot(aes(x = as.factor(quality), y = alcohol), data = winedata) +
+  ggtitle("Alcohol vs. quality") +
+  xlab("Quality of the wine (1 to 10)") +
+  ylab("Alcohol content (% by volume)") +
   geom_boxplot()
 ```
 
 Observations:
+
 1. The box plot is much clearer in showing that higher quality wines have a higher alcohol content.
 2. Quality level 5 has the highest number of outliers. It's hard to say why this is the case as of now.
 
@@ -280,10 +349,14 @@ Observations:
 
 ```{r echo=FALSE}
 ggplot(aes(x = as.factor(quality), y = sulphates), data = winedata) +
+  ggtitle("Sulphates vs. quality") +
+  xlab("Sulphates (potassium sulphate - g/dm^3)") +
+  ylab("Quality of the wine (1 to 10)") +
   geom_boxplot()
 ```
 
 Observations:
+
 1. While the relationship is not as strong as alcohol vs. quality, sulphates do show positive correlation to quality.
 2. Thus, higher quality alcohols tend to have higher medians of sulphates.
 3. Quality 5 again has the highest number of outliers. It could be that average alcohols were the most common choice in the dataset by the human reviewers, and these people might have decided to err on the side of average.
@@ -292,9 +365,14 @@ Observations:
 
 ```{r echo=FALSE}
 ggplot(aes(x = as.factor(quality), y = volatile.acidity), data = winedata) +
+  ggtitle("Volatile acidity vs. quality") +
+  xlab("Quality of the wine (1 to 10)") +
+  ylab("Volatile acidity (acetic acid - g/dm^3)") +
   geom_boxplot()
 ```
+
 Observations:
+
 1. A clear negative trend. Higher quality alcohols have lower amount of volatile acidity.
 2. Quality score 5 has a quantity of outliers comparabable to Quality 6, but more spaced out. When it comes to quality score of 5, the variables we've analysed so far say very little about the quality in isolation. A combination of these features could tell us more about why a certain alcohol got a quality rating 5.
 
@@ -304,20 +382,33 @@ I see three features on acidity, "fixed.acidity", "volatile.acidity", "citric.ac
 
 ```{r echo=FALSE}
 ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
-  geom_point()
+  ggtitle("Fixed acidity vs. volatile acidity") +
+  xlab("Fixed acidity (tartaric acid - g/dm^3)") +
+  ylab("Volatile acidity (acetic acid - g/dm^3)") +
+  geom_point() +
+  geom_smooth(method="lm")
 ```
 
 ```{r echo=FALSE}
 ggplot(aes(x = fixed.acidity, y = citric.acid), data = winedata) +
-  geom_point()
+  ggtitle("Fixed acidity vs. citric acid") +
+  xlab("Fixed acidity (tartaric acid - g/dm^3)") +
+  ylab("Citric acid (g/dm^3)") +
+  geom_point() +
+  geom_smooth(method="lm")
 ```
 
 ```{r echo=FALSE}
 ggplot(aes(x = volatile.acidity, y = citric.acid), data = winedata) +
-  geom_point()
+  ggtitle("Volatile acidity vs. citric acid") +
+  xlab("Volatile acidity (acetic acid - g/dm^3)") +
+  ylab("Citric acid (g/dm^3)") +
+  geom_point() +
+  geom_smooth(method="lm")
 ```
 
 Observations:
+
 1. These observations corroborate the correlation coefficients that we calculated earlier. 
 1. Fixed and volatile acidity don't have a strong correlation (pearson coeff of magnitude 0.25)
 1. However, fixed and citric show signs of positive correlation (pearson coeff of 0.67)
@@ -327,19 +418,27 @@ Observations:
 
 ```{r echo=FALSE}
 ggplot(aes(x = pH, y = density), data = winedata) +
-  geom_point()
+  ggtitle("pH vs. Density") +
+  xlab("pH") +
+  ylab("Density (g/cm^3)") +
+  geom_point() +
+  geom_smooth(method="lm")
 ```
 
 Let's look at a boxplot for a better view of the correlation.
 
 ```{r echo=FALSE}
 ggplot(aes(x = as.factor(ceiling(pH*4)/4), y = density), data = winedata) +
+  ggtitle("pH vs. Density Boxplot") +
+  xlab("pH (grouped in intervals of 0.25)") +
+  ylab("Density (g/cm^3)") +
   geom_boxplot()
 ```
 
 In order to make the boxplot feasible, I multiply the pH by 4 and find the "ceiling." This gives me an integer, which I then divide by 4 again. In essence, pH gets grouped in sections of 0.25, and allows me to plot a boxplot by treating the pH groups as a factor.
 
 Observations:
+
 1. With increasing pH, we observe decreasing density.
 
 ## Volatile acidity vs. pH
@@ -348,25 +447,36 @@ For some reason, volatile acidity has a positive correlation with pH.
 
 ```{r echo=FALSE}
 ggplot(aes(x = pH, y = volatile.acidity), data = winedata) +
-  geom_point()
+  ggtitle("pH vs. Volatile acidity") +
+  xlab("pH") +
+  ylab("Volatile acidity (acetic acid - g/dm^3)") +
+  geom_point() +
+  geom_smooth(method="lm")
 ```
 
 ```{r echo=FALSE}
 ggplot(aes(x = as.factor(ceiling(pH*4)/4), y = volatile.acidity), data = winedata) +
+  ggtitle("pH vs. Volatile acidity Boxplot") +
+  xlab("pH (grouped in intervals of 0.25)") +
+  ylab("Volatile acidity (acetic acid - g/dm^3)") +
   geom_boxplot()
 ```
 
 ```{r echo=FALSE}
 ggplot(aes(x = as.factor(ceiling(pH*4)/4), y = volatile.acidity), data = filter(winedata, quality==6)) +
+  ggtitle("pH vs. Volatile acidity for Wine quality score 6") +
+  xlab("pH (grouped in intervals of 0.25)") +
+  ylab("Volatile acidity (acetic acid - g/dm^3)") +
   geom_boxplot()
 ```
 
 For quality score 6, the anomalous relationship between pH and acidity is even more apparent.
 
 Observations:
+
 1. Since lower pH should generally mean higher acidity, this relationship is anomalous.
 2. However, we're talking about volatile acidity here. As per "http://waterhouse.ucdavis.edu/whats-in-wine/volatile-acidity", there is a specific method to measuring volatile acidity. Thus, I'm assuming that you cannot detect its presence solely by using a "litmus" test.
-3. Thus, the relationship between pH and volatile acidity might not really exist, and could be driven a third variable instead (say, fixed.acidity). For example, fixed acidity shows negative correlation with pH, and fixed acidity also shows negative correlation with volatile acidity. By extension, pH is bound to show positive correlation with volatile.acidity. But it could be fixed acidity driving the relation, whereas there is no causation between volatile.acidity and pH.
+3. Thus, the relationship between pH and volatile acidity might not really exist, and could be driven a third variable instead (pH might be measuring only fixed acidity). For example, fixed acidity shows negative correlation with pH, and fixed acidity also shows negative correlation with volatile acidity. By extension, pH is bound to show positive correlation with volatile.acidity. But it could be fixed acidity driving the relation, whereas there is no causation between volatile.acidity and pH.
 
 # Bivariate Analysis
 
@@ -395,6 +505,9 @@ Since quality is the only categorical variable, all the multi-variate plots will
 
 ```{r echo=FALSE}
 ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
+  ggtitle("Fixed acidity vs. volatile acidity faceted by quality") +
+  xlab("Fixed acidity (tartaric acid - g/dm^3)") +
+  ylab("Volatile acidity (acetic acid - g/dm^3)") +
   geom_point() +
   geom_smooth(method="lm") +
   facet_wrap(~quality)
@@ -402,12 +515,16 @@ ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
 
 ```{r echo=FALSE}
 ggplot(aes(x = fixed.acidity, y = citric.acid), data = winedata) +
+  ggtitle("Fixed acidity vs. citric acid faceted by quality") +
+  xlab("Fixed acidity (tartaric acid - g/dm^3)") +
+  ylab("Citric acid (g/dm^3)") +
   geom_point() +
   geom_smooth(method="lm") +
   facet_wrap(~quality)
 ```
 
 Observations:
+
 1. For different qualities, the geom_smooth line looks similarly sloped. So, quality does not seem to have an impact in how these quantities vary.
 2. Fixed acidity and volatile acidity have negative correlation.
 3. Citrict acid and fixed acidity have positive correlation.
@@ -416,14 +533,18 @@ Observations:
 
 Let's explore the seemingly anomalous relationship in detail. In the bivariate section, I had hypothesized that fixed acidity is the lurking variable in the relationship between pH and volatile acidity.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
+  ggtitle("Fixed acidity vs. volatile acidity faceted by pH") +
+  xlab("Fixed acidity (tartaric acid - g/dm^3)") +
+  ylab("Volatile acidity (acetic acid - g/dm^3)") +
   geom_point() +
   geom_smooth(method="lm") +
   facet_wrap(~as.factor(ceiling(pH*4) / 4))
 ```
 
 Observations:
+
 1. For different groupings of pH, fixed and volatile acidity either show positive or negative correlation.
 2. This explains the seeming anomaly between volatile acidity and pH. Fixed acidity and pH have a strong negative correlation as expected. Hoewver, volatile acidity's correlation with fixed acidity is different depending on the pH level. As I corroborated earlier, volatile acidity might not have a direct correlation to pH due to how it's measured.
 
@@ -432,12 +553,16 @@ Volatile acidity, sulphates, and alcohol had strong correlation to quality. We'l
 
 ```{r echo=FALSE}
 ggplot(aes(x = alcohol, y = volatile.acidity), data = winedata) +
+  ggtitle("Alcohol vs. volatile acidity faceted by quality") +
+  xlab("Alcohol (% by volume)") +
+  ylab("Volatile acidity (acetic acid - g/dm^3)") +
   geom_point() +
   geom_smooth(method="lm") +
   facet_wrap(~as.factor(quality))
 ```
 
 Observations:
+
 1. We can observe that less volatile acidity correlates with better wine quality.
 2. Also, increase in concentration of alcohol correlates with better wine quality.
 3. This corroborates what we found earlier in the bivariate analysis.

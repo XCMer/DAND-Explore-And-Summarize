@@ -15,6 +15,7 @@ Red Wine Data Analysis by Raahul Seshadri
 # want it to. This will clean up the flow of your report.
 
 library(ggplot2)
+library(GGally)
 library(dplyr)
 ```
 
@@ -148,9 +149,19 @@ ggplot(aes(x = residual.sugar), data = winedata) +
   scale_x_continuous()
 ```
 
+```{r echo=FALSE}
+ggplot(aes(x = residual.sugar), data = winedata) +
+  ggtitle("Counts of wine against logarithm residual sugar") +
+  xlab("Log10 of Residual sugar (originally in g/dm^3)") +
+  ylab("No. of wines") +
+  geom_histogram(binwidth=0.1) +
+  scale_x_log10(breaks = 1:10)
+```
+
 Observations:
 
 1. Positively skewed normal with a lot of outliers on the positive end.
+1. By taking log10 on the x axis (2nd plot), we get to see how the outliers are distributed.
 
 ### Density
 
@@ -178,9 +189,20 @@ ggplot(aes(x = chlorides), data = winedata) +
   geom_histogram(binwidth=0.01)
 ```
 
+```{r echo=FALSE}
+ggplot(aes(x = chlorides), data = winedata) +
+  ggtitle("Counts of wine against logarithm of chlorides") +
+  xlab("Log10 of Chlorides (sodium chloride - originally in g/dm^3)") +
+  ylab("No. of wines") +
+  geom_histogram(binwidth=0.05) +
+  scale_x_log10(breaks=c(c(0.01), seq(0.0, 0.1, by=0.02), seq(0.1, 0.7, by=0.1)))
+```
+
 Observations:
 
 1. A positively skewed normal distribution with a lot of outliers.
+1. By taking log10 on the x axis in the 2nd plot, we see the distribution of outliers much better. We clearly see a long tail to the right.
+1. Also, the 2nd plot makes apparent values to the very left, which is separate from the main distribution by a big break.
 
 ### Alcohol
 
@@ -228,6 +250,13 @@ I'll first plot the correlations between all variables. This will help me inspec
 ```{r echo=FALSE}
 cor(winedata)
 ```
+
+```{r echo=FALSE}
+ggcorr(winedata) +
+  ggtitle("Pairwise correlation between all features in the dataset")
+```
+
+The `ggcorr` function allows us to quickly visualize correlations between variables. Then, we can look at the table constructed earlier to narrow down on individual points and their values.
 
 Below, I enumerate all correlations that I'd explore later (>= 0.25).
 
@@ -327,7 +356,7 @@ ggplot(aes(x = alcohol, y = quality), data = winedata) +
   ggtitle("Alcohol vs. quality") +
   xlab("Alcohol (% by volume)") +
   ylab("Quality of the wine (1 to 10)") +
-  geom_point()
+  geom_point(alpha=1/20)
 ```
 
 It's difficult to decipher the above scatterplot. While we know that there's a correlation, a boxplot might give us more insights.
@@ -385,7 +414,7 @@ ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
   ggtitle("Fixed acidity vs. volatile acidity") +
   xlab("Fixed acidity (tartaric acid - g/dm^3)") +
   ylab("Volatile acidity (acetic acid - g/dm^3)") +
-  geom_point() +
+  geom_point(alpha=1/5) +
   geom_smooth(method="lm")
 ```
 
@@ -394,7 +423,7 @@ ggplot(aes(x = fixed.acidity, y = citric.acid), data = winedata) +
   ggtitle("Fixed acidity vs. citric acid") +
   xlab("Fixed acidity (tartaric acid - g/dm^3)") +
   ylab("Citric acid (g/dm^3)") +
-  geom_point() +
+  geom_point(alpha=1/5) +
   geom_smooth(method="lm")
 ```
 
@@ -403,7 +432,7 @@ ggplot(aes(x = volatile.acidity, y = citric.acid), data = winedata) +
   ggtitle("Volatile acidity vs. citric acid") +
   xlab("Volatile acidity (acetic acid - g/dm^3)") +
   ylab("Citric acid (g/dm^3)") +
-  geom_point() +
+  geom_point(alpha=1/5) +
   geom_smooth(method="lm")
 ```
 
@@ -421,7 +450,7 @@ ggplot(aes(x = pH, y = density), data = winedata) +
   ggtitle("pH vs. Density") +
   xlab("pH") +
   ylab("Density (g/cm^3)") +
-  geom_point() +
+  geom_point(alpha=1/5) +
   geom_smooth(method="lm")
 ```
 
@@ -450,7 +479,7 @@ ggplot(aes(x = pH, y = volatile.acidity), data = winedata) +
   ggtitle("pH vs. Volatile acidity") +
   xlab("pH") +
   ylab("Volatile acidity (acetic acid - g/dm^3)") +
-  geom_point() +
+  geom_point(alpha=1/5) +
   geom_smooth(method="lm")
 ```
 
@@ -508,7 +537,7 @@ ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
   ggtitle("Fixed acidity vs. volatile acidity faceted by quality") +
   xlab("Fixed acidity (tartaric acid - g/dm^3)") +
   ylab("Volatile acidity (acetic acid - g/dm^3)") +
-  geom_point() +
+  geom_point(alpha=1/10) +
   geom_smooth(method="lm") +
   facet_wrap(~quality)
 ```
@@ -518,7 +547,7 @@ ggplot(aes(x = fixed.acidity, y = citric.acid), data = winedata) +
   ggtitle("Fixed acidity vs. citric acid faceted by quality") +
   xlab("Fixed acidity (tartaric acid - g/dm^3)") +
   ylab("Citric acid (g/dm^3)") +
-  geom_point() +
+  geom_point(alpha=1/10) +
   geom_smooth(method="lm") +
   facet_wrap(~quality)
 ```
@@ -538,7 +567,7 @@ ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
   ggtitle("Fixed acidity vs. volatile acidity faceted by pH") +
   xlab("Fixed acidity (tartaric acid - g/dm^3)") +
   ylab("Volatile acidity (acetic acid - g/dm^3)") +
-  geom_point() +
+  geom_point(alpha=1/10) +
   geom_smooth(method="lm") +
   facet_wrap(~as.factor(ceiling(pH*4) / 4))
 ```
@@ -556,7 +585,7 @@ ggplot(aes(x = alcohol, y = volatile.acidity), data = winedata) +
   ggtitle("Alcohol vs. volatile acidity faceted by quality") +
   xlab("Alcohol (% by volume)") +
   ylab("Volatile acidity (acetic acid - g/dm^3)") +
-  geom_point() +
+  geom_point(alpha=1/10) +
   geom_smooth(method="lm") +
   facet_wrap(~as.factor(quality))
 ```
@@ -608,7 +637,7 @@ ggplot(aes(x = fixed.acidity, y = volatile.acidity), data = winedata) +
   ggtitle("Fixed acidity vs. volatile acidity faceted by pH") +
   xlab("Fixed acidity (tartaric acid - g/dm^3)") +
   ylab("Volatile acidity (acetic acid - g/dm^3)") +
-  geom_point() +
+  geom_point(alpha=1/10) +
   geom_smooth(method="lm") +
   facet_wrap(~as.factor(ceiling(pH*4) / 4))
 ```
@@ -626,7 +655,7 @@ ggplot(aes(x = fixed.acidity, y = citric.acid), data = winedata) +
   ggtitle("Fixed acidity vs. citric acid") +
   xlab("Fixed acidity (tartaric acid - g/dm^3)") +
   ylab("Citric acid (g/dm^3)") +
-  geom_point() +
+  geom_point(alpha=1/6) +
   geom_smooth(method="lm")
 ```
 
@@ -641,6 +670,8 @@ Plots like this allows us to make important decisions on reducing dimensionality
 ------
 
 # Reflection
+
+## My Approach
 
 When I started with the exploration, the first thing that I noticed was that all the features were numeric. The target variable, Quality, was the only categorical variable.
 
@@ -663,3 +694,13 @@ I also started investigating the relationship between volatile acidity and pH. A
 The multivariate section was more of a way to reaffirm observations from the bivariate section. I only faceted on quality (which is the only categorical variable) and pH (because I had the domain knowledge to know that grouping intervals of pH could lead to interesting plots).
 
 I selected the final plots to bring out correlation with quality, which was our target variable. But instead of just fixating on quality, I also picked out plots that showed strong correlation, hence redundancy, in the data. Since the volatile acidity vs. pH was initially confusing due to my assumption, I included that plot as well to demonstrate analysis that required several graphs to understand.
+
+## How could the analysis be improved in future work
+
+I found that quality 5 and 6 were the most common wine entries in the dataset. In comparison, wine quality 3 & 4, and 7 & 8, has fewer records. Just like we group age into intervals of 10 years or 20 years for better analysis, we can group these levels into 3 quality levels: low, average, high. It would be interesting to see quality vs. other parameters under this new "grouped" quality levels.
+
+Adding to it, I would perform cluster analysis on all the wines, with the no. of clusters as 3 (since we have 3 levels of quality: low, average, high). Of course, it's not guaranteed that the dataset would get clustered as per their quality. If they seem noisy, I'd increase the number of clusters to 6 or 9, to get a sense of what linear combinations affect the quality.
+
+Within each cluster, I'd then plot the distribution of quality. Depending on what I see, I would have continued more exploration.
+
+Apart from that, I could have trained a overfitting decision tree or had done PCA to find out which features were more important to the determination of quality, and tallied it with what I thought were more important through the analysis that I've done above.
